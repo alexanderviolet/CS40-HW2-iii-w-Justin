@@ -2,11 +2,11 @@
 
 
 +--------------------------------------------------------+
-|Keeper of the record:                                   |
+|Keeper of the record: Justin Paik (jpaik03)             |
 |--------------------------------------------------------|
 | Other group member(s):                                 |
-|                                                        |
-|                                                        |
+| Alexander Eugene Violet (aviole01)                     |
+| (full government name is crazy)                        |
 |                                                        |
 +--------------------------------------------------------+
 
@@ -22,41 +22,35 @@ interface for values that users store in your collection.
 1A: Briefly define the terms "boxed" and "unboxed" as used for these
     interfaces (i.e., help us be sure you know which is which!):
 
-
-
-
-
+    Unboxed:
+    - explicitly stores data within the array itself
+    - eg:
+    -------------------------
+    |   x   |   y   |   z   |
+    |       |       |       |
+    -------------------------
+    Boxed:
+    - holds pointers to potentially different data types
 
 1B: List two (or more) advantages of the boxed representation.
 
-
-
-
-
-
-
+    - generalizable
+    - modular
+        - implementation doesn't care what type we pass in since
+        it's just a pointers
 
 1C: List two (or more) advantages of an unboxed representation.
 
-
-
-
-
-
-
+    - saves memory, as pointers do not need to be stored
+    - faster, don't have to go through memory access
 
 1D: Look at the interface to UArray (a link to an interface
     summary is at the start of the lab instructions). Discuss the 
     methods that show the use of the unboxed style. Why, for example, 
     does UArray_new take both a number of elements and an element size? 
 
-
-
-
-
-
-
-
+    - it is up to the client to explicitly state the known maximum size of each
+      slot
 
 
 
@@ -67,15 +61,12 @@ PART 2: 2D Arrays from 1D Arrays
     arrays. Describe briefly how you would do this. For example, if
     the user asked you to create a 5x7 array of values, how many
     one-dimensional arrays would you create? If the user asked to
-    store a value in cell [3,6] where would it go?
+    store a value in cell [2,3] where would it go?
 
-
-
-
-
-
-
-
+    - For a 5x7 array, we would create 5 1D arrays of size 7 (column major).
+    - We would achieve this by using an array of pointers to each column
+    - eg: if someone wants to go to [2,3] we would go to the 3rd column then
+      walk down to the 4th slot, assuming a 0-indexed 2D array
 
 2B. Another approach is to use a single one-dimensional array and to
     put all the elements of the 2D array into that. Again, assuming
@@ -83,23 +74,12 @@ PART 2: 2D Arrays from 1D Arrays
     for the index in the 2D array where a value [x,y] would go in the
     1D array.
 
-
-
-
-
-
-
+    - Under the hood, we have 1 array. For exmaple, to get to the second
+      row, we must go a scalar multiple of the length of the first row
+    - Accessing [x,y] <-- (2D array representaiton) would actually be
+      [length_of_row * x + y]
 
 2C. (optional) is there another mapping that would work as well?
-
-
-
-
-
-
-
-
-
 
 
 
@@ -110,11 +90,14 @@ PART 3: Designing the UArray2 Interface
     of the UArray2 interface from reading useuarray2.c and from running
     correct_useuarray2.
 
+    1. Believe we have the same / similar underlying array representation 
+       where we must use different mapping functions to access in column major 
+       vs. row major. 
 
+    2. The previous questions hint at ways we should think about 
+       our arithmetic like 2D with pointers or 1D with simple arithmetic. 
 
-
-
-
-
-
-
+    3. What is boxed vs unboxed? It appears that the correct U2 implementation
+       uses unboxed because we explicitly state the width, height, and size_of. 
+       We'll take inspo from the Hanson interface, but try to focus more on the
+       concepts we learned in lab. 
