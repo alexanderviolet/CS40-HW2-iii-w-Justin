@@ -4,9 +4,7 @@
  *      September 25, 2025
  *      iii
  * 
- *      Header file for 2D representaiton of a bit map as a client of Hanson's 
- *      bit map interface. Includes function prototypes for future use in .c
- *      file and implementation. 
+ *      Interface for two-dimensional bit arrays
  */
  
 #include <stdio.h>
@@ -21,13 +19,133 @@
 
 typedef struct T *T;
 
-T Bit2_new(int length);
-int Bit2_length(T set);
-int Bit2_count(T set);
-void Bit2_free(T *set);
-int Bit2_get(T set, int n);
-int Bit2_put(T set, int n, int bit);
-void Bit2_map_row_major(T bit2, void (*function)(), bool *OK);
-void Bit2_map_col_major(T bit2, void (*function)(), bool *OK);
+/******** Bit2_new ********
+ *
+ * Creates a new 2D bit array with specified dimensions
+ *
+ * Parameters:
+ *      int width: number of columns (must be non-negative)
+ *      int height: number of rows (must be non-negative)
+ * Return: 
+ *      Pointer to new Bit2_T instance (under the hood is Hanson bitmap)
+ * Expects:
+ *      width and height are non-negative
+ *      Throws CRE if invalid dimensions
+ * Notes:
+ *      Initializes all bits to 0 (white)
+ ************************/
+T Bit2_new(int width, int height);
+
+/******** Bit2_free ********
+ *
+ * Deallocates memory used by a 2D bit array
+ *
+ * Parameters:
+ *      T *bitmap: pointer to Bit2_T instance to free
+ * Return: 
+ *      Nothing
+ * Expects:
+ *      bitmap and *bitmap are not NULL
+ *      Throws CRE if NULL pointer
+ ************************/
+void Bit2_free(T *bitmap);
+
+/******** Bit2_width ********
+ *
+ * Returns the width (number of columns) of the bit array
+ *
+ * Parameters:
+ *      T bitmap: Bit2_T instance
+ * Return: 
+ *      Number of columns
+ * Expects:
+ *      bitmap is not NULL
+ *      Throws CRE if NULL pointer
+ ************************/
+int Bit2_width(T bitmap);
+
+/******** Bit2_height ********
+ *
+ * Returns the height (number of rows) of the bit array
+ *
+ * Parameters:
+ *      T bitmap: Bit2_T instance
+ * Return: 
+ *      Number of rows
+ * Expects:
+ *      bitmap is not NULL
+ *      Throws CRE if NULL pointer
+ ************************/
+int Bit2_height(T bitmap);
+
+/******** Bit2_get ********
+ *
+ * Retrieves the bit value at specified coordinates
+ *
+ * Parameters:
+ *      T bitmap: Bit2_T instance
+ *      int col: column index (0-based)
+ *      int row: row index (0-based)
+ * Return: 
+ *      0 or 1 (the bit value)
+ * Expects:
+ *      bitmap is not NULL
+ *      col in range [0, width-1]
+ *      row in range [0, height-1]
+ *      Throws CRE if out of bounds or NULL pointer
+ ************************/
+int Bit2_get(T bitmap, int col, int row);
+
+/******** Bit2_put ********
+ *
+ * Sets the bit value at specified coordinates
+ *
+ * Parameters:
+ *      T bitmap: Bit2_T instance
+ *      int col: column index (0-based)
+ *      int row: row index (0-based)
+ *      int bit: value to set (0 or 1)
+ * Return: 
+ *      Previous value at that position
+ * Expects:
+ *      bitmap is not NULL
+ *      col in range [0, width-1]
+ *      row in range [0, height-1]
+ *      bit is either 0 or 1
+ *      Throws CRE if invalid parameters
+ ************************/
+int Bit2_put(T bitmap, int col, int row, int bit);
+
+/******** Bit2_map_row_major ********
+ *
+ * Applies function to each bit in row-major order
+ * (processes each row completely before moving to next row)
+ *
+ * Parameters:
+ *      T bitmap: Bit2_T instance
+ *      TODO: figure out other arguments
+ * Return: 
+ *      Nothing
+ * Expects:
+ *      bitmap is not NULL
+ *      Throws CRE if NULL pointers
+ ************************/
+void Bit2_map_row_major(T bitmap);
+
+/******** Bit2_map_col_major ********
+ *
+ * Applies function to each bit in column-major order
+ * (processes each column completely before moving to next column)
+ *
+ * Parameters:
+ *      T bitmap: Bit2_T instance
+ *      TODO: figure out other arguments
+ * Return: 
+ *      Nothing
+ * Expects:
+ *      bitmap is not NULL
+ *      Throws CRE if NULL pointers
+ ************************/
+void Bit2_map_col_major(T bitmap);
 
 #endif
