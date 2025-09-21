@@ -1,35 +1,15 @@
 /*
- *      uarray2.h
+ *      uarray2.c
  *      Justin Paik (jpaik03), Alex Violet (aviole01)
  *      September 25, 2025
  *      iii
  * 
- *      Header file with function prototypes and function contracts for the 
- *      UArray2 Implementation. This is also part of our design submission, so
- *      future us don't get confused when you see function contracts here rather
- *      than the .c file. 
+ *      Interface for two-dimensional bit arrays
  */
- 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include "uarray.h"
 
-#ifndef UARRAY2_INCLUDED
-#define UARRAY2_INCLUDED
+#include "uarray2.h"
 
-#define T UArray_T
-
-// typedef struct T *T;
-
-struct UArray2_variables
-{
-        int width;
-        int height;
-};
-
-struct UArray2_variables variables;
-
+// struct UArray2_variables variables;
 
 /******** UArray2_new ********
  *
@@ -49,7 +29,21 @@ struct UArray2_variables variables;
  * Notes:
  *      None
  ************************/
-T UArray2_new(int height, int width, int size);
+T UArray2_new(int height, int width, int size)
+{
+        /* Ensure height, width, and size are correctly formatted */
+        /* TODO */
+        
+        /* Make a UArray object */
+        T array =  UArray_new(height * width, size);
+        
+        // struct UArray2_variables;
+
+        variables.height = height;
+        variables.width = width;
+
+        return array;
+}
 
 /******** UArray2_free ********
  *
@@ -65,7 +59,10 @@ T UArray2_new(int height, int width, int size);
  * Notes:
  *      In reality, *uarray2 points to a struct pointer to a UArray
  ************************/
-void UArray2_free(T *uarray2);
+void UArray2_free(T *uarray2)
+{
+        (void) uarray2;
+}
 
 /******** UArray2_length ********
  *
@@ -80,7 +77,11 @@ void UArray2_free(T *uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_length(T uarray2);
+int UArray2_length(T uarray2)
+{
+        /* TODO: ensure uarray2 is not NULL */
+        return UArray_length(uarray2);
+}
 
 /******** UArray2_height ********
  *
@@ -95,7 +96,12 @@ int UArray2_length(T uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_height(T uarray2);
+int UArray2_height(T uarray2)
+{
+        /* TODO: ensure uarray2 is not NULL */
+        (void) uarray2;
+        return variables.height;
+}
 
 /******** UArray2_width ********
  *
@@ -110,7 +116,12 @@ int UArray2_height(T uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_width(T uarray2);
+int UArray2_width(T uarray2)
+{
+        /* TODO: ensure uarray2 is not NULL*/  
+        (void) uarray2;      
+        return variables.width;
+}
 
 /******** UArray2_size ********
  *
@@ -125,7 +136,11 @@ int UArray2_width(T uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_size(T uarray2);
+int UArray2_size(T uarray2)
+{
+        /* TODO: ensure array2 is not null */
+        return UArray_size(uarray2);
+}
 
 /******** UArray2_at ********
  *
@@ -144,7 +159,13 @@ int UArray2_size(T uarray2);
  * Notes:
  *      none
  ************************/
-void *UArray2_at(T uarray2, int row, int col);
+void *UArray2_at(T uarray2, int row, int col)
+{
+        (void) uarray2;
+        (void) row;
+        (void) col;
+        return NULL;
+}
 
 /******** UArray2_map_row_major ********
  *
@@ -170,7 +191,12 @@ void *UArray2_at(T uarray2, int row, int col);
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
-void UArray2_map_row_major(T uarray2, void (*function)(), bool *OK);
+void UArray2_map_row_major(T uarray2, void (*function)(), bool *OK)
+{
+        (void) uarray2;
+        (void) function;
+        (void) OK;
+}
 
 /******** UArray2_map_col_major ********
  *
@@ -198,6 +224,9 @@ void UArray2_map_row_major(T uarray2, void (*function)(), bool *OK);
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
-void UArray2_map_col_major(T uarray2, void (*function)(), bool *OK);
-
-#endif
+void UArray2_map_col_major(T uarray2, void (*function)(), bool *OK)
+{
+        (void) uarray2;
+        (void) function;
+        (void) OK;       
+}
