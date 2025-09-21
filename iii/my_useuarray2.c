@@ -29,12 +29,12 @@ int main(int argc, char *argv[])
         (void) argc;
         (void) argv;
 
-        T arr1 = UArray2_new(1,1,1);
+        T2 arr1 = UArray2_new(1,1,1);
         printf("Size1 = %d\n", UArray2_size(arr1));
         printf("Width1 = %d\n", UArray2_width(arr1));
         printf("Height1 = %d\n", UArray2_height(arr1));
 
-        T arr2 = UArray2_new(2,2,2);
+        T2 arr2 = UArray2_new(2,2,2);
         printf("Size2 = %d\n", UArray2_size(arr2));
         printf("Width2 = %d\n", UArray2_width(arr2));
         printf("Height2 = %d\n", UArray2_height(arr2));
@@ -43,6 +43,15 @@ int main(int argc, char *argv[])
         printf("Width1 = %d\n", UArray2_width(arr1));
         printf("Height1 = %d\n", UArray2_height(arr1));
 
+        UArray2_free(&arr1);
+        UArray2_free(&arr2);
+
+        // T2 arrfail = UArray2_new(-1, 1, 1);
+        // T2 arrfail = UArray2_new(1, -1, 1);
+        // T2 arrfail = UArray2_new(1, 1, -1);
+        // printf("SizeFail = %d\n", UArray2_size(arrfail));
+        // printf("WidthFail = %d\n", UArray2_width(arrfail));
+        // printf("HeightFail = %d\n", UArray2_height(arrfail));
 
         return 0;
 }

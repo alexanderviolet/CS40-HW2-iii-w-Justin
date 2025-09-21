@@ -18,9 +18,9 @@
 #ifndef UARRAY2_INCLUDED
 #define UARRAY2_INCLUDED
 
-#define T UArray2_T
+#define T2 UArray2_T
 
-typedef struct T *T;
+typedef struct T2 *T2;
 
 /******** UArray2_new ********
  *
@@ -40,7 +40,7 @@ typedef struct T *T;
  * Notes:
  *      None
  ************************/
-T UArray2_new(int height, int width, int size);
+T2 UArray2_new(int height, int width, int size);
 
 /******** UArray2_free ********
  *
@@ -56,7 +56,7 @@ T UArray2_new(int height, int width, int size);
  * Notes:
  *      In reality, *uarray2 points to a struct pointer to a UArray
  ************************/
-void UArray2_free(T *uarray2);
+void UArray2_free(T2 *uarray2);
 
 /******** UArray2_length ********
  *
@@ -71,7 +71,7 @@ void UArray2_free(T *uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_length(T uarray2);
+int UArray2_length(T2 uarray2);
 
 /******** UArray2_height ********
  *
@@ -86,7 +86,7 @@ int UArray2_length(T uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_height(T uarray2);
+int UArray2_height(T2 uarray2);
 
 /******** UArray2_width ********
  *
@@ -101,7 +101,7 @@ int UArray2_height(T uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_width(T uarray2);
+int UArray2_width(T2 uarray2);
 
 /******** UArray2_size ********
  *
@@ -116,7 +116,7 @@ int UArray2_width(T uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_size(T uarray2);
+int UArray2_size(T2 uarray2);
 
 /******** UArray2_at ********
  *
@@ -135,7 +135,7 @@ int UArray2_size(T uarray2);
  * Notes:
  *      none
  ************************/
-void *UArray2_at(T uarray2, int row, int col);
+void *UArray2_at(T2 uarray2, int row, int col);
 
 /******** UArray2_map_row_major ********
  *
@@ -161,7 +161,7 @@ void *UArray2_at(T uarray2, int row, int col);
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
-void UArray2_map_row_major(T uarray2, void (*function)(), bool *OK);
+void UArray2_map_row_major(T2 uarray2, void (*function)(), bool *OK);
 
 /******** UArray2_map_col_major ********
  *
@@ -189,6 +189,6 @@ void UArray2_map_row_major(T uarray2, void (*function)(), bool *OK);
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
-void UArray2_map_col_major(T uarray2, void (*function)(), bool *OK);
+void UArray2_map_col_major(T2 uarray2, void (*function)(), bool *OK);
 
 #endif
