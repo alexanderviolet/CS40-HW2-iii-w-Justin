@@ -18,18 +18,9 @@
 #ifndef UARRAY2_INCLUDED
 #define UARRAY2_INCLUDED
 
-#define T UArray_T
+#define T UArray2_T
 
-// typedef struct T *T;
-
-struct UArray2_variables
-{
-        int width;
-        int height;
-};
-
-struct UArray2_variables variables;
-
+typedef struct T *T;
 
 /******** UArray2_new ********
  *

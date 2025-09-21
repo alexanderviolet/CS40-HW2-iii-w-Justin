@@ -9,7 +9,13 @@
 
 #include "uarray2.h"
 
-// struct UArray2_variables variables;
+struct T
+{
+        int width;
+        int height;
+        int size;
+        UArray_T array;
+};
 
 /******** UArray2_new ********
  *
@@ -35,14 +41,17 @@ T UArray2_new(int height, int width, int size)
         /* TODO */
         
         /* Make a UArray object */
-        T array =  UArray_new(height * width, size);
-        
-        // struct UArray2_variables;
+        T arr2d = malloc(sizeof(*arr2d));
 
-        variables.height = height;
-        variables.width = width;
+        /* TODO malloc space */
 
-        return array;
+        arr2d->height = height;
+        arr2d->width = width;
+        arr2d->size = size;
+        arr2d->array = UArray_new(height * width, size);
+
+        /* TODO: eventually free later down*/
+        return arr2d;
 }
 
 /******** UArray2_free ********
@@ -80,7 +89,7 @@ void UArray2_free(T *uarray2)
 int UArray2_length(T uarray2)
 {
         /* TODO: ensure uarray2 is not NULL */
-        return UArray_length(uarray2);
+        return UArray_length(uarray2->array);
 }
 
 /******** UArray2_height ********
@@ -99,8 +108,7 @@ int UArray2_length(T uarray2)
 int UArray2_height(T uarray2)
 {
         /* TODO: ensure uarray2 is not NULL */
-        (void) uarray2;
-        return variables.height;
+        return uarray2->height;
 }
 
 /******** UArray2_width ********
@@ -118,9 +126,8 @@ int UArray2_height(T uarray2)
  ************************/
 int UArray2_width(T uarray2)
 {
-        /* TODO: ensure uarray2 is not NULL*/  
-        (void) uarray2;      
-        return variables.width;
+        /* TODO: ensure uarray2 is not NULL*/      
+        return uarray2->width;
 }
 
 /******** UArray2_size ********
@@ -139,7 +146,7 @@ int UArray2_width(T uarray2)
 int UArray2_size(T uarray2)
 {
         /* TODO: ensure array2 is not null */
-        return UArray_size(uarray2);
+        return uarray2->size;
 }
 
 /******** UArray2_at ********
