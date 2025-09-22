@@ -40,7 +40,7 @@ typedef struct T2 *T2;
  * Notes:
  *      None
  ************************/
-T2 UArray2_new(int height, int width, int size);
+T2 UArray2_new(int width, int height, int size);
 
 /******** UArray2_free ********
  *
@@ -58,20 +58,20 @@ T2 UArray2_new(int height, int width, int size);
  ************************/
 void UArray2_free(T2 *uarray2);
 
-/******** UArray2_length ********
+/******** UArray2_width ********
  *
- * Return the number of elements of a UArray2
+ * Return the number of columns of a UArray2
  *
  * Parameters:
  *      uarray2: address value of uarray object
  * Return: 
- *      int representing the number of elements of a UArray2
+ *      int representing the number of columns of a UArray2
  * Expects:
  *      CRE if uarray2 is NULL (thrown by Hanson)
  * Notes:
  *      none
  ************************/
-int UArray2_length(T2 uarray2);
+int UArray2_width(T2 uarray2);
 
 /******** UArray2_height ********
  *
@@ -87,21 +87,6 @@ int UArray2_length(T2 uarray2);
  *      none
  ************************/
 int UArray2_height(T2 uarray2);
-
-/******** UArray2_width ********
- *
- * Return the number of columns of a UArray2
- *
- * Parameters:
- *      uarray2: address value of uarray object
- * Return: 
- *      int representing the number of columns of a UArray2
- * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
- * Notes:
- *      none
- ************************/
-int UArray2_width(T2 uarray2);
 
 /******** UArray2_size ********
  *
@@ -120,8 +105,8 @@ int UArray2_size(T2 uarray2);
 
 /******** UArray2_at ********
  *
- * Client requests UArray2_at(row, col). Under the hood, we are actually going
- * for 1D Uarray which can be accessed at UArray_at(row * width + col).
+ * Client requests UArray2_at(row, col). Returns void pointer to memory located 
+ * at arr[row][col].
  *
  * Parameters:
  *      uarray2: address value of uarray object
@@ -135,7 +120,7 @@ int UArray2_size(T2 uarray2);
  * Notes:
  *      none
  ************************/
-void *UArray2_at(T2 uarray2, int row, int col);
+void *UArray2_at(T2 uarray2, int col, int row);
 
 /******** UArray2_map_row_major ********
  *

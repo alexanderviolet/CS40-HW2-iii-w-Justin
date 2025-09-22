@@ -27,25 +27,25 @@ struct T2
 
 /******** UArray2_new ********
  *
- * Allocates space for a UArray2 if height and width are non-negative and size
+ * Allocates space for a UArray2 if width and height are non-negative and size
  * is positive.
  *
  * Parameters:
- *      int height: the height of the array to be created
  *      int width: the width of the array to be created
+ *      int height: the height of the array to be created
  *      int size: the number of bytes per cell in the array
  * Return: 
  *      a struct pointer to the instance of the new UArray
  * Expects:
- *      height and width are nonnegative
+ *      width and height are nonnegative
  *      size is positive
  *      throws a CRE if an invalid input is given
  * Notes:
  *      throws a CRE if malloc fails
  ************************/
-T2 UArray2_new(int height, int width, int size)
+T2 UArray2_new(int width, int height, int size)
 {       
-        if (height < 0 || width < 0 || size <= 0) {
+        if (width < 0 || height < 0 || size <= 0) {
                 RAISE(Invalid_Argument);
         }
 
@@ -55,10 +55,10 @@ T2 UArray2_new(int height, int width, int size)
                 RAISE(Malloc_Error);
         }
 
-        arr2d->height = height;
         arr2d->width = width;
+        arr2d->height = height;
         arr2d->size = size;
-        arr2d->array = UArray_new(height * width, size);
+        arr2d->array = UArray_new(width * height, size);
 
         return arr2d;
 }
@@ -86,25 +86,25 @@ void UArray2_free(T2 *uarray2)
         free(*uarray2);
 }
 
-/******** UArray2_length ********
+/******** UArray2_width ********
  *
- * Return the number of elements of a UArray2
+ * Return the number of columns of a UArray2
  *
  * Parameters:
  *      uarray2: address value of uarray object
  * Return: 
- *      int representing the number of elements of a UArray2
+ *      int representing the number of columns of a UArray2
  * Expects:
  *      CRE if uarray2 is NULL (thrown by Hanson)
  * Notes:
  *      none
  ************************/
-int UArray2_length(T2 uarray2)
+int UArray2_width(T2 uarray2)
 {
         if (uarray2 == NULL) {
                 RAISE(Invalid_Argument);
-        }
-        return UArray_length(uarray2->array);
+        }    
+        return uarray2->width;
 }
 
 /******** UArray2_height ********
@@ -126,27 +126,6 @@ int UArray2_height(T2 uarray2)
                 RAISE(Invalid_Argument);
         }
         return uarray2->height;
-}
-
-/******** UArray2_width ********
- *
- * Return the number of columns of a UArray2
- *
- * Parameters:
- *      uarray2: address value of uarray object
- * Return: 
- *      int representing the number of columns of a UArray2
- * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
- * Notes:
- *      none
- ************************/
-int UArray2_width(T2 uarray2)
-{
-        if (uarray2 == NULL) {
-                RAISE(Invalid_Argument);
-        }    
-        return uarray2->width;
 }
 
 /******** UArray2_size ********
@@ -187,12 +166,15 @@ int UArray2_size(T2 uarray2)
  * Notes:
  *      none
  ************************/
-void *UArray2_at(T2 uarray2, int row, int col)
+void *UArray2_at(T2 uarray2, int col, int row)
 {
-        (void) uarray2;
-        (void) row;
-        (void) col;
-        return NULL;
+        if (col < 0 || uarray2->width - 1 < col) {
+                RAISE(Invalid_Argument);
+        } else if (row < 0 || uarray2->height - 1 < row) {
+                RAISE(Invalid_Argument);
+        }
+
+        return UArray_at(uarray2->array, row * uarray2->width + col);
 }
 
 /******** UArray2_map_row_major ********

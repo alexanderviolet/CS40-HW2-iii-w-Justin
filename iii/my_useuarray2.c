@@ -29,29 +29,29 @@ int main(int argc, char *argv[])
         (void) argc;
         (void) argv;
 
-        T2 arr1 = UArray2_new(1,1,1);
-        printf("Size1 = %d\n", UArray2_size(arr1));
+        T2 arr1 = UArray2_new(9,9,4);
+        printf("Number of bytes per slot = %d\n", UArray2_size(arr1));
         printf("Width1 = %d\n", UArray2_width(arr1));
         printf("Height1 = %d\n", UArray2_height(arr1));
 
-        T2 arr2 = UArray2_new(2,2,2);
-        printf("Size2 = %d\n", UArray2_size(arr2));
-        printf("Width2 = %d\n", UArray2_width(arr2));
-        printf("Height2 = %d\n", UArray2_height(arr2));
+        /* Set Values to random*/
+        for (int row = 0; row < 9; row++) {
+                for (int col = 0; col < 9; col++) {
+                        // void *vptr = UArray2_at(arr1, row, col);
+                        // int *value = vptr;
+                        int *value = UArray2_at(arr1, col, row);
+                        *value = (row + col) % 2;
+                }
+        }
 
-        printf("Size1 = %d\n", UArray2_size(arr1));
-        printf("Width1 = %d\n", UArray2_width(arr1));
-        printf("Height1 = %d\n", UArray2_height(arr1));
-
-        UArray2_free(&arr1);
-        UArray2_free(&arr2);
-
-        // T2 arrfail = UArray2_new(-1, 1, 1);
-        // T2 arrfail = UArray2_new(1, -1, 1);
-        // T2 arrfail = UArray2_new(1, 1, -1);
-        // printf("SizeFail = %d\n", UArray2_size(arrfail));
-        // printf("WidthFail = %d\n", UArray2_width(arrfail));
-        // printf("HeightFail = %d\n", UArray2_height(arrfail));
+        /* Print out values for testing*/
+        for (int row = 0; row < 9; row++) {
+                for (int col = 0; col < 9; col++) {
+                        int *value = UArray2_at(arr1, col, row);
+                        printf("%d ", *value);
+                }
+                printf("\n");
+        }
 
         return 0;
 }
