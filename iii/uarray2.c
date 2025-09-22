@@ -151,61 +151,32 @@ int UArray2_size(T2 uarray2)
 
 /******** UArray2_at ********
  *
- * Client requests UArray2_at(row, col). Under the hood, we are actually going
+ * Client requests UArray2_at(col, row). Under the hood, we are actually going
  * for 1D Uarray which can be accessed at UArray_at(row * width + col).
  *
  * Parameters:
  *      uarray2: address value of uarray object
- *      int row: the row of the requested cell
  *      int col: the col of the requested cell
+ *      int row: the row of the requested cell
  * Return: 
- *      void pointer to value stored at (row, col) 2D or (row * width + col) 1D
+ *      void pointer to value stored at (col, row) 2D or (row * width + col) 1D
  * Expects:
  *      CRE if uarray2 is NULL (thrown by Hanson)
- *      row and col are within [0, height - 1] and [0, width - 1] respectively
+ *      col and row are within [0, width - 1] and [0, height - 1] respectively
  * Notes:
  *      none
  ************************/
 void *UArray2_at(T2 uarray2, int col, int row)
 {
-        if (col < 0 || uarray2->width - 1 < col) {
+        if (uarray2 == NULL) {
+                RAISE(Invalid_Argument);
+        } else if (col < 0 || uarray2->width - 1 < col) {
                 RAISE(Invalid_Argument);
         } else if (row < 0 || uarray2->height - 1 < row) {
                 RAISE(Invalid_Argument);
         }
 
         return UArray_at(uarray2->array, row * uarray2->width + col);
-}
-
-/******** UArray2_map_row_major ********
- *
- * Visit each cell in array via row major order and map according to some 
- * function's instructions. Iterate through each row by checking all columns 
- * before moving onto next row. Under the hood, this will be a simple iteration
- * through the 1D array elements. 
- *
- * Parameters:
- *      uarray2: address value of uarray object
- *      void (*function)(): void pointer to some function instructions for
- *      the map function to apply to each element
- *              For example: in useuarray2.c they passed check and print to
- *              each element.
- *      bool *OK: a bool pointer representing if an array is valid
- * Return:
- *      nothing
- * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
- *      CRE if passed NULL function pointer
- *      CRE if boolean pointer supplied is NULL
- * Notes:
- *      Boolean is a tracker pointer, which may be altered for error checking
- *      and assertions elsewhere
- ************************/
-void UArray2_map_row_major(T2 uarray2, void (*function)(), bool *OK)
-{
-        (void) uarray2;
-        (void) function;
-        (void) OK;
 }
 
 /******** UArray2_map_col_major ********
@@ -223,20 +194,86 @@ void UArray2_map_row_major(T2 uarray2, void (*function)(), bool *OK)
  *      the map function to apply to each element
  *              For example: in useuarray2.c they passed check and print to
  *              each element.
- *      bool *OK: a bool pointer representing if an array is valid
+ *      void *cl: closure void pointer to some dependent element within mapping.
+ *                To be modular, the parameter is a void pointer so the client 
+ *                can give us whatever they want.
  * Return: 
  *      nothing
  * Expects:
  *      CRE if uarray2 is NULL (thrown by Hanson)
  *      CRE if passed NULL function pointer
- *      CRE if boolean pointer supplied is NULL
+ *      CRE if void pointer supplied is NULL
  * Notes:
- *      Boolean is a tracker pointer, which may be altered for error checking
- *      and assertions elsewhere
+ * 
  ************************/
-void UArray2_map_col_major(T2 uarray2, void (*function)(), bool *OK)
+
+void another_function(int col, int row, T2 uarray2, ) {
+        printf("uarray2[%d][%d]\n", col, row);
+}
+void UArray2_map_col_major(T2 uarray2, 
+        void apply(int col, int row, T2 a, void *p1, void *p2),
+        void *cl)
 {
-        (void) uarray2;
+        /* Ensure all arguments are not NULL */
+        // if(uarray2 == NULL || function == NULL || cl == NULL) {
+        //         RAISE(Invalid_Argument);
+        // }
+
         (void) function;
-        (void) OK;       
+        (void) cl;
+        
+        printf("TODO: you will apply some function to:\n");
+        for (int col = 0; col < uarray2->width; col++) {
+                for (int row = 0; row < uarray2->height; row++) {
+                        printf("uarray2[%d][%d]\n", col, row);
+                        /* call function passed */
+                        long number = 99
+                        *function(col, row, uarray2->array, number, cl);
+                        /* maybe do something */
+
+                        /* TODO: Goal is to get this function to work for check_and_print */
+                }
+        }
+        
+}
+
+/******** UArray2_map_row_major ********
+ *
+ * Visit each cell in array via row major order and map according to some 
+ * function's instructions. Iterate through each row by checking all columns 
+ * before moving onto next row. Under the hood, this will be a simple iteration
+ * through the 1D array elements. 
+ *
+ * Parameters:
+ *      uarray2: address value of uarray object
+ *      void (*function)(): void pointer to some function instructions for
+ *      the map function to apply to each element
+ *              For example: in useuarray2.c they passed check and print to
+ *              each element.
+ *      void *cl: closure void pointer to some dependent element within mapping.
+ *                To be modular, the parameter is a void pointer so the client 
+ *                can give us whatever they want.
+ * Return:
+ *      nothing
+ * Expects:
+ *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      CRE if passed NULL function pointer
+ *      CRE if void pointer supplied is NULL
+ * Notes:
+ * 
+ ************************/
+void UArray2_map_row_major(T2 uarray2, void *function, void *cl)
+{
+        /* Ensure all arguments are not NULL */
+        if(uarray2 == NULL || function == NULL || cl == NULL) {
+                RAISE(Invalid_Argument);
+        }
+
+        /* QUESTION: how do we configure function parameter? */
+        for (int row = 0; row < uarray2->height; row++) {
+                for (int col = 0; col < uarray2->width; col++) {
+                        printf("uarray2[%d][%d]\n", col, row);
+                }
+        }
+        
 }

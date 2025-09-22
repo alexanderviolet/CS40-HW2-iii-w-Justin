@@ -1,5 +1,5 @@
 /*
- *      bit2.h
+ *      bit2.c
  *      Justin Paik (jpaik03), Alex Violet (aviole01)
  *      September 25, 2025
  *      iii
@@ -11,13 +11,24 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "bit.h"
+#include "assert.h"
 
 #ifndef BIT2_INCLUDED
 #define BIT2_INCLUDED
 
-#define BT Bit2_T
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/*                      EXCEPTION(S)                     */
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-typedef struct BT *BT;
+Except_T Invalid_Argument;
+Except_T Malloc_Error;
+
+struct BT
+{
+        int width;
+        int height;
+        Bit_T array;
+};
 
 /******** Bit2_new ********
  *
@@ -34,7 +45,25 @@ typedef struct BT *BT;
  * Notes:
  *      Initializes all bits to 0 (white)
  ************************/
-BT Bit2_new(int width, int height);
+BT Bit2_new(int width, int height)
+{
+        /* Ensure dimensions are valid */
+        if (width < 0 || height < 0) {
+                RAISE(Invalid_Argument);
+        }
+
+        /* Make a UArray object */
+        BT bit2d = malloc(sizeof(*bit2d));
+        if(bit2d == NULL) {
+                RAISE(Malloc_Error);
+        }
+
+        bit2d->width = width;
+        bit2d->height = height;
+        bit2d->array = Bit_new(width * height, size);
+
+        return bit2d;
+}
 
 /******** Bit2_free ********
  *

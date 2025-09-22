@@ -1,10 +1,10 @@
 /*
- *      my_useuarray2.c
+ *      my_usearray2.c
  *      Justin Paik (jpaik03), Alex Violet (aviole01)
  *      September 25, 2025
  *      iii
  * 
- *      Interface for two-dimensional bit arrays
+ *      Interface for two-dimensional bitmaps
  */
 
 #include "uarray2.h"
@@ -44,14 +44,7 @@ int main(int argc, char *argv[])
                 }
         }
 
-        /* Print out values for testing*/
-        for (int row = 0; row < 9; row++) {
-                for (int col = 0; col < 9; col++) {
-                        int *value = UArray2_at(arr1, col, row);
-                        printf("%d ", *value);
-                }
-                printf("\n");
-        }
+        UArray2_map_col_major(arr1, NULL, NULL); /* NOTE: THIS IS NOT PROPERLY FORMATTED. GET HELP DURING OFFICE HOURS */
 
         return 0;
 }

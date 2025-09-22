@@ -24,17 +24,17 @@ typedef struct T2 *T2;
 
 /******** UArray2_new ********
  *
- * Allocates space for a UArray2 if height and width are non-negative and size
+ * Allocates space for a UArray2 if width and height are non-negative and size
  * is positive.
  *
  * Parameters:
- *      int height: the height of the array to be created
  *      int width: the width of the array to be created
+ *      int height: the height of the array to be created
  *      int size: the number of bytes per cell in the array
  * Return: 
  *      a struct pointer to the instance of the new UArray
  * Expects:
- *      height and width are nonnegative
+ *      width and height are nonnegative
  *      size is positive
  *      throws a CRE if an invalid input is given
  * Notes:
@@ -105,49 +105,23 @@ int UArray2_size(T2 uarray2);
 
 /******** UArray2_at ********
  *
- * Client requests UArray2_at(row, col). Returns void pointer to memory located 
- * at arr[row][col].
+ * Client requests UArray2_at(col, row). Returns void pointer to memory located 
+ * at arr[col][row].
  *
  * Parameters:
  *      uarray2: address value of uarray object
- *      int row: the row of the requested cell
  *      int col: the col of the requested cell
+ *      int row: the row of the requested cell
  * Return: 
- *      void pointer to value stored at (row, col) 2D or (row * width + col) 1D
+ *      void pointer to value stored at (col, row) 2D or (row * width + col) 1D
  * Expects:
  *      CRE if uarray2 is NULL (thrown by Hanson)
- *      row and col are within [0, height - 1] and [0, width - 1] respectively
+ *      col and row are within [0, width - 1] and [0, height - 1] respectively
  * Notes:
  *      none
  ************************/
-void *UArray2_at(T2 uarray2, int col, int row);
-
-/******** UArray2_map_row_major ********
- *
- * Visit each cell in array via row major order and map according to some 
- * function's instructions. Iterate through each row by checking all columns 
- * before moving onto next row. Under the hood, this will be a simple iteration
- * through the 1D array elements. 
- *
- * Parameters:
- *      uarray2: address value of uarray object
- *      void (*function)(): void pointer to some function instructions for
- *      the map function to apply to each element
- *              For example: in useuarray2.c they passed check and print to
- *              each element.
- *      bool *OK: a bool pointer representing if an array is valid
- * Return:
- *      nothing
- * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
- *      CRE if passed NULL function pointer
- *      CRE if boolean pointer supplied is NULL
- * Notes:
- *      Boolean is a tracker pointer, which may be altered for error checking
- *      and assertions elsewhere
- ************************/
-void UArray2_map_row_major(T2 uarray2, void (*function)(), bool *OK);
-
+ void *UArray2_at(T2 uarray2, int col, int row);
+ 
 /******** UArray2_map_col_major ********
  *
  * Visit each cell in array via column major order and map according to some 
@@ -163,17 +137,47 @@ void UArray2_map_row_major(T2 uarray2, void (*function)(), bool *OK);
  *      the map function to apply to each element
  *              For example: in useuarray2.c they passed check and print to
  *              each element.
- *      bool *OK: a bool pointer representing if an array is valid
+ *      void *cl: void pointer to some dependent element within mapping. To be 
+ *                modular, the parameter is a void pointer so the client can 
+ *                give us whatever they want.
  * Return: 
  *      nothing
  * Expects:
  *      CRE if uarray2 is NULL (thrown by Hanson)
  *      CRE if passed NULL function pointer
- *      CRE if boolean pointer supplied is NULL
+ *      CRE if void pointer supplied is NULL
  * Notes:
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
-void UArray2_map_col_major(T2 uarray2, void (*function)(), bool *OK);
+ void UArray2_map_col_major(T2 uarray2, void *function, void *cl);
+
+/******** UArray2_map_row_major ********
+ *
+ * Visit each cell in array via row major order and map according to some 
+ * function's instructions. Iterate through each row by checking all columns 
+ * before moving onto next row. Under the hood, this will be a simple iteration
+ * through the 1D array elements. 
+ *
+ * Parameters:
+ *      uarray2: address value of uarray object
+ *      void (*function)(): void pointer to some function instructions for
+ *      the map function to apply to each element
+ *              For example: in useuarray2.c they passed check and print to
+ *              each element.
+ *      void *cl: void pointer to some dependent element within mapping. To be 
+ *                modular, the parameter is a void pointer so the client can 
+ *                give us whatever they want.
+ * Return:
+ *      nothing
+ * Expects:
+ *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      CRE if passed NULL function pointer
+ *      CRE if void pointer supplied is NULL
+ * Notes:
+ *      Boolean is a tracker pointer, which may be altered for error checking
+ *      and assertions elsewhere
+ ************************/
+void UArray2_map_row_major(T2 uarray2, void *function, void *cl);
 
 #endif
