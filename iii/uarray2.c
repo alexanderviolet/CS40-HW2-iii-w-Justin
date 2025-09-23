@@ -209,21 +209,21 @@ void *UArray2_at(T uarray2, int col, int row)
  * Notes:
  * 
  ************************/
-void UArray2_map_col_major(T uarray2, void *function, void *cl)
+void UArray2_map_col_major(T uarray2, 
+        void apply(int col, int row, T a, void *p1, void *p2), void *cl)
 {
         /* Ensure all arguments are not NULL */
-        if(uarray2 == NULL || function == NULL || cl == NULL) {
+        if(uarray2 == NULL || apply == NULL || cl == NULL) {
                 RAISE(Invalid_Argument);
         }
 
-        (void) function;
-        (void) cl;
+        // (void) apply;
+        // (void) cl;
         
-        printf("TODO: you will apply some function to:\n");
-        for (int col = 0; col < uarray2->width; col++) {
-                for (int row = 0; row < uarray2->height; row++) {
-                        int *value = UArray2_at(uarray2, col, row);
-                        printf("(%d,%d) = %d\n", col, row, *value);
+        /* QUESTION: how do we configure function parameter? */
+        for (int row = 0; row < uarray2->height; row++) {
+                for (int col = 0; col < uarray2->width; col++) {
+                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), cl);
                 }
         }
         
@@ -261,12 +261,9 @@ void UArray2_map_row_major(T uarray2, void *function, void *cl)
                 RAISE(Invalid_Argument);
         }
 
-        /* QUESTION: how do we configure function parameter? */
-        for (int row = 0; row < uarray2->height; row++) {
-                for (int col = 0; col < uarray2->width; col++) {
-                        printf("uarray2[%d][%d]\n", col, row);
-                }
-        }
+        (void) uarray2;
+        (void) function;
+        (void) cl;
         
 }
 

@@ -150,7 +150,9 @@ int UArray2_size(T uarray2);
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
- void UArray2_map_col_major(T uarray2, void *function, void *cl);
+//  void UArray2_map_col_major(T uarray2, void *function, void *cl);
+void UArray2_map_col_major(T uarray2, 
+        void apply(int col, int row, T a, void *p1, void *p2), void *cl);
 
 /******** UArray2_map_row_major ********
  *
