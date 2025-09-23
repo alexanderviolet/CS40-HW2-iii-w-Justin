@@ -27,6 +27,7 @@ check_and_print(int i, int j, UArray2_T a, void *p1, void *p2)
         }
 
         printf("ar[%d,%d] = %d\n", i, j, *entry_p);
+        printf("OK: %s\n", (*((bool *)p2) ? "true" : "false "));
 }
 
 /******** NAME ********
@@ -60,14 +61,6 @@ int main(int argc, char *argv[])
                         running_total++;
                 }
         }
-
-        // for (int row = 0; row < UArray2_height(arr1); row++) {
-        //         for (int col = 0; col < UArray2_width(arr1); col++) {
-        //                 int *value = UArray2_at(arr1, col, row);
-        //                 printf("%d ", *value);
-        //         }
-        //         printf("\n");
-        // }
         
         bool OK = true;
         printf("column major:\n");
@@ -77,6 +70,8 @@ int main(int argc, char *argv[])
         UArray2_map_row_major(arr1, check_and_print, &OK);
 
         UArray2_free(&arr1);
+
+        printf("The array is %sOK!\n", (OK ? "" : "NOT "));
 
         return 0;
 }
