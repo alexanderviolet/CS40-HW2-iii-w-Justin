@@ -180,4 +180,5 @@ int UArray2_size(T2 uarray2);
  ************************/
 void UArray2_map_row_major(T2 uarray2, void *function, void *cl);
 
+#undef T2
 #endif

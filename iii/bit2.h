@@ -15,9 +15,9 @@
 #ifndef BIT2_INCLUDED
 #define BIT2_INCLUDED
 
-#define BT Bit2_T
+#define T Bit2_T
 
-typedef struct BT *BT;
+typedef struct T *T;
 
 /******** Bit2_new ********
  *
@@ -34,56 +34,56 @@ typedef struct BT *BT;
  * Notes:
  *      Initializes all bits to 0 (white)
  ************************/
-BT Bit2_new(int width, int height);
+T Bit2_new(int width, int height);
 
 /******** Bit2_free ********
  *
  * Deallocates memory used by a 2D bit array
  *
  * Parameters:
- *      BT *bitmap: pointer to Bit2_T instance to free
+ *      T *bitmap: pointer to Bit2_T instance to free
  * Return: 
  *      Nothing
  * Expects:
  *      bitmap and *bitmap are not NULL
  *      Throws CRE if NULL pointer
  ************************/
-void Bit2_free(BT *bitmap);
+void Bit2_free(T *bitmap);
 
 /******** Bit2_width ********
  *
  * Returns the width (number of columns) of the bit array
  *
  * Parameters:
- *      BT bitmap: Bit2_T instance
+ *      T bitmap: Bit2_T instance
  * Return: 
  *      Number of columns
  * Expects:
  *      bitmap is not NULL
  *      Throws CRE if NULL pointer
  ************************/
-int Bit2_width(BT bitmap);
+int Bit2_width(T bitmap);
 
 /******** Bit2_height ********
  *
  * Returns the height (number of rows) of the bit array
  *
  * Parameters:
- *      BT bitmap: Bit2_T instance
+ *      T bitmap: Bit2_T instance
  * Return: 
  *      Number of rows
  * Expects:
  *      bitmap is not NULL
  *      Throws CRE if NULL pointer
  ************************/
-int Bit2_height(BT bitmap);
+int Bit2_height(T bitmap);
 
 /******** Bit2_get ********
  *
  * Retrieves the bit value at specified coordinates
  *
  * Parameters:
- *      BT bitmap: Bit2_T instance
+ *      T bitmap: Bit2_T instance
  *      int col: column index (0-based)
  *      int row: row index (0-based)
  * Return: 
@@ -94,14 +94,14 @@ int Bit2_height(BT bitmap);
  *      row in range [0, height-1]
  *      Throws CRE if out of bounds or NULL pointer
  ************************/
-int Bit2_get(BT bitmap, int col, int row);
+int Bit2_get(T bitmap, int col, int row);
 
 /******** Bit2_put ********
  *
  * Sets the bit value at specified coordinates
  *
  * Parameters:
- *      BT bitmap: Bit2_T instance
+ *      T bitmap: Bit2_T instance
  *      int col: column index (0-based)
  *      int row: row index (0-based)
  *      int bit: value to set (0 or 1)
@@ -114,7 +114,7 @@ int Bit2_get(BT bitmap, int col, int row);
  *      bit is either 0 or 1
  *      Throws CRE if invalid parameters
  ************************/
-int Bit2_put(BT bitmap, int col, int row, int bit);
+int Bit2_put(T bitmap, int col, int row, int bit);
 
 /******** Bit2_map_row_major ********
  *
@@ -122,7 +122,7 @@ int Bit2_put(BT bitmap, int col, int row, int bit);
  * (processes each row completely before moving to next row)
  *
  * Parameters:
- *      BT bitmap: Bit2_T instance
+ *      T bitmap: Bit2_T instance
  *      TODO: figure out other arguments
  * Return: 
  *      Nothing
@@ -130,7 +130,7 @@ int Bit2_put(BT bitmap, int col, int row, int bit);
  *      bitmap is not NULL
  *      Throws CRE if NULL pointers
  ************************/
-void Bit2_map_row_major(BT bitmap);
+void Bit2_map_row_major(T bitmap);
 
 /******** Bit2_map_col_major ********
  *
@@ -138,7 +138,7 @@ void Bit2_map_row_major(BT bitmap);
  * (processes each column completely before moving to next column)
  *
  * Parameters:
- *      BT bitmap: Bit2_T instance
+ *      T bitmap: Bit2_T instance
  *      TODO: figure out other arguments
  * Return: 
  *      Nothing
@@ -146,6 +146,7 @@ void Bit2_map_row_major(BT bitmap);
  *      bitmap is not NULL
  *      Throws CRE if NULL pointers
  ************************/
-void Bit2_map_col_major(BT bitmap);
+void Bit2_map_col_major(T bitmap);
 
+#undef T
 #endif

@@ -29,7 +29,9 @@ int main(int argc, char *argv[])
         (void) argc;
         (void) argv;
 
-        BT bitmap2D = Bit2_new(1,1);
+        Bit2_T bitmap2D = Bit2_new(1,1);
+
+        (void) bitmap2D;
         
         return 0;
 }
