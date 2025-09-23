@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "bit.h"
+#include "assert.h"
 
 #ifndef BIT2_INCLUDED
 #define BIT2_INCLUDED

@@ -8,7 +8,6 @@
  */
  
 #include "bit2.h"
-#include "assert.h"
 
 #define T Bit2_T
 
@@ -55,7 +54,9 @@ T Bit2_new(int width, int height)
         }
 
         bit2d->width = width;
+        // printf("WIDTH: %d <-- this corresponds to number of columns\n", bit2d->width);
         bit2d->height = height;
+        // printf("HEIGHT: %d <-- this corresponds to number of columns\n", bit2d->height);
         bit2d->array = Bit_new(width * height);
 
         return bit2d;
@@ -75,7 +76,11 @@ T Bit2_new(int width, int height)
  ************************/
 void Bit2_free(T *bitmap)
 {
-        (void) bitmap;
+        /* Free 1D bidmap */
+        Bit_free(&(*bitmap)->array);
+
+        /* Free actual struct */
+        free(*bitmap);
 }
 
 /******** Bit2_width ********
@@ -92,9 +97,11 @@ void Bit2_free(T *bitmap)
  ************************/
 int Bit2_width(T bitmap)
 {
-        (void) bitmap;
+        if (bitmap == NULL) {
+                RAISE(Invalid_Argument);
+        }
 
-        return -1;
+        return bitmap->width;
 }
 
 /******** Bit2_height ********
@@ -111,9 +118,11 @@ int Bit2_width(T bitmap)
  ************************/
 int Bit2_height(T bitmap)
 {
-        (void) bitmap;
+        if (bitmap == NULL) {
+                RAISE(Invalid_Argument);
+        }
 
-        return -1;
+        return bitmap->height;
 }
 
 /******** Bit2_get ********
@@ -134,11 +143,15 @@ int Bit2_height(T bitmap)
  ************************/
 int Bit2_get(T bitmap, int col, int row)
 {
-        (void) bitmap;
-        (void) col;
-        (void) row;
+        if (bitmap == NULL) {
+                RAISE(Invalid_Argument);
+        } else if (col < 0 || bitmap->width - 1 < col) {
+                RAISE(Invalid_Argument);
+        } else if (row < 0 || bitmap->height - 1 < row) {
+                RAISE(Invalid_Argument);
+        }
 
-        return -1;
+        return Bit_get(bitmap->array, row * bitmap->width + col);
 }
 
 /******** Bit2_put ********
@@ -151,7 +164,7 @@ int Bit2_get(T bitmap, int col, int row)
  *      int row: row index (0-based)
  *      int bit: value to set (0 or 1)
  * Return: 
- *      Previous value at that position
+ *      Previous bit value at that position
  * Expects:
  *      bitmap is not NULL
  *      col in range [0, width-1]
@@ -161,12 +174,17 @@ int Bit2_get(T bitmap, int col, int row)
  ************************/
 int Bit2_put(T bitmap, int col, int row, int bit)
 {
-        (void) bitmap;
-        (void) col;
-        (void) row;
-        (void) bit;
+        if (bitmap == NULL) {
+                RAISE(Invalid_Argument);
+        } else if (col < 0 || bitmap->height - 1 < col) {
+                RAISE(Invalid_Argument);
+        } else if (row < 0 || bitmap->width - 1 < row) {
+                RAISE(Invalid_Argument);
+        } else if (bit < 0 || 1 < bit) {
+                RAISE(Invalid_Argument);
+        }
 
-        return -1;
+        return Bit_put(bitmap->array, row * bitmap->width + col, bit);
 }
 
 /******** Bit2_map_row_major ********

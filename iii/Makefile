@@ -62,7 +62,10 @@ sudoku: sudoku.o uarray2.o
 unblackedges: unblackedges.o bit2.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-my_useuarray2: useuarray2.o uarray2.o
+# my_useuarray2: useuarray2.o uarray2.o
+# 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+
+my_useuarray2: my_useuarray2.o uarray2.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 # my_usebit2: usebit2.o bit2.o

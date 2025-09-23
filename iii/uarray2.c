@@ -10,6 +10,8 @@
 #include "uarray2.h"
 #include "assert.h"
 
+#define T UArray2_T
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 /*                      EXCEPTION(S)                     */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -17,7 +19,7 @@
 Except_T Invalid_Argument;
 Except_T Malloc_Error;
 
-struct T2
+struct T
 {
         int width;
         int height;
@@ -43,14 +45,14 @@ struct T2
  * Notes:
  *      throws a CRE if malloc fails
  ************************/
-T2 UArray2_new(int width, int height, int size)
+T UArray2_new(int width, int height, int size)
 {       
         if (width < 0 || height < 0 || size <= 0) {
                 RAISE(Invalid_Argument);
         }
 
         /* Make a UArray object */
-        T2 arr2d = malloc(sizeof(*arr2d));
+        T arr2d = malloc(sizeof(*arr2d));
         if(arr2d == NULL) {
                 RAISE(Malloc_Error);
         }
@@ -77,7 +79,7 @@ T2 UArray2_new(int width, int height, int size)
  * Notes:
  *      In reality, *uarray2 points to a struct pointer to a UArray
  ************************/
-void UArray2_free(T2 *uarray2)
+void UArray2_free(T *uarray2)
 {
         /* Free 1D array */
         UArray_free(&(*uarray2)->array);
@@ -99,11 +101,12 @@ void UArray2_free(T2 *uarray2)
  * Notes:
  *      none
  ************************/
-int UArray2_width(T2 uarray2)
+int UArray2_width(T uarray2)
 {
         if (uarray2 == NULL) {
                 RAISE(Invalid_Argument);
-        }    
+        }
+
         return uarray2->width;
 }
 
@@ -120,7 +123,7 @@ int UArray2_width(T2 uarray2)
  * Notes:
  *      none
  ************************/
-int UArray2_height(T2 uarray2)
+int UArray2_height(T uarray2)
 {
         if (uarray2 == NULL) {
                 RAISE(Invalid_Argument);
@@ -141,7 +144,7 @@ int UArray2_height(T2 uarray2)
  * Notes:
  *      none
  ************************/
-int UArray2_size(T2 uarray2)
+int UArray2_size(T uarray2)
 {
         if (uarray2 == NULL) {
                 RAISE(Invalid_Argument);
@@ -166,7 +169,7 @@ int UArray2_size(T2 uarray2)
  * Notes:
  *      none
  ************************/
-void *UArray2_at(T2 uarray2, int col, int row)
+void *UArray2_at(T uarray2, int col, int row)
 {
         if (uarray2 == NULL) {
                 RAISE(Invalid_Argument);
@@ -206,18 +209,12 @@ void *UArray2_at(T2 uarray2, int col, int row)
  * Notes:
  * 
  ************************/
-
-void another_function(int col, int row, T2 uarray2, ) {
-        printf("uarray2[%d][%d]\n", col, row);
-}
-void UArray2_map_col_major(T2 uarray2, 
-        void apply(int col, int row, T2 a, void *p1, void *p2),
-        void *cl)
+void UArray2_map_col_major(T uarray2, void *function, void *cl)
 {
         /* Ensure all arguments are not NULL */
-        // if(uarray2 == NULL || function == NULL || cl == NULL) {
-        //         RAISE(Invalid_Argument);
-        // }
+        if(uarray2 == NULL || function == NULL || cl == NULL) {
+                RAISE(Invalid_Argument);
+        }
 
         (void) function;
         (void) cl;
@@ -225,13 +222,8 @@ void UArray2_map_col_major(T2 uarray2,
         printf("TODO: you will apply some function to:\n");
         for (int col = 0; col < uarray2->width; col++) {
                 for (int row = 0; row < uarray2->height; row++) {
-                        printf("uarray2[%d][%d]\n", col, row);
-                        /* call function passed */
-                        long number = 99
-                        *function(col, row, uarray2->array, number, cl);
-                        /* maybe do something */
-
-                        /* TODO: Goal is to get this function to work for check_and_print */
+                        int *value = UArray2_at(uarray2, col, row);
+                        printf("(%d,%d) = %d\n", col, row, *value);
                 }
         }
         
@@ -262,7 +254,7 @@ void UArray2_map_col_major(T2 uarray2,
  * Notes:
  * 
  ************************/
-void UArray2_map_row_major(T2 uarray2, void *function, void *cl)
+void UArray2_map_row_major(T uarray2, void *function, void *cl)
 {
         /* Ensure all arguments are not NULL */
         if(uarray2 == NULL || function == NULL || cl == NULL) {
@@ -277,3 +269,5 @@ void UArray2_map_row_major(T2 uarray2, void *function, void *cl)
         }
         
 }
+
+#undef T

@@ -18,9 +18,9 @@
 #ifndef UARRAY2_INCLUDED
 #define UARRAY2_INCLUDED
 
-#define T2 UArray2_T
+#define T UArray2_T
 
-typedef struct T2 *T2;
+typedef struct T *T;
 
 /******** UArray2_new ********
  *
@@ -40,7 +40,7 @@ typedef struct T2 *T2;
  * Notes:
  *      None
  ************************/
-T2 UArray2_new(int width, int height, int size);
+T UArray2_new(int width, int height, int size);
 
 /******** UArray2_free ********
  *
@@ -56,7 +56,7 @@ T2 UArray2_new(int width, int height, int size);
  * Notes:
  *      In reality, *uarray2 points to a struct pointer to a UArray
  ************************/
-void UArray2_free(T2 *uarray2);
+void UArray2_free(T *uarray2);
 
 /******** UArray2_width ********
  *
@@ -71,7 +71,7 @@ void UArray2_free(T2 *uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_width(T2 uarray2);
+int UArray2_width(T uarray2);
 
 /******** UArray2_height ********
  *
@@ -86,7 +86,7 @@ int UArray2_width(T2 uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_height(T2 uarray2);
+int UArray2_height(T uarray2);
 
 /******** UArray2_size ********
  *
@@ -101,7 +101,7 @@ int UArray2_height(T2 uarray2);
  * Notes:
  *      none
  ************************/
-int UArray2_size(T2 uarray2);
+int UArray2_size(T uarray2);
 
 /******** UArray2_at ********
  *
@@ -120,7 +120,7 @@ int UArray2_size(T2 uarray2);
  * Notes:
  *      none
  ************************/
- void *UArray2_at(T2 uarray2, int col, int row);
+ void *UArray2_at(T uarray2, int col, int row);
  
 /******** UArray2_map_col_major ********
  *
@@ -150,7 +150,7 @@ int UArray2_size(T2 uarray2);
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
- void UArray2_map_col_major(T2 uarray2, void *function, void *cl);
+ void UArray2_map_col_major(T uarray2, void *function, void *cl);
 
 /******** UArray2_map_row_major ********
  *
@@ -178,7 +178,7 @@ int UArray2_size(T2 uarray2);
  *      Boolean is a tracker pointer, which may be altered for error checking
  *      and assertions elsewhere
  ************************/
-void UArray2_map_row_major(T2 uarray2, void *function, void *cl);
+void UArray2_map_row_major(T uarray2, void *function, void *cl);
 
-#undef T2
+#undef T
 #endif

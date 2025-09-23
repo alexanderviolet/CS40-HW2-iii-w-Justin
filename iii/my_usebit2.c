@@ -29,9 +29,19 @@ int main(int argc, char *argv[])
         (void) argc;
         (void) argv;
 
-        Bit2_T bitmap2D = Bit2_new(1,1);
+        // printf("Before initializing bitmap2D\n");
+        Bit2_T bitmap2D = Bit2_new(9,15);
+        // printf("After initializing bitmap2D\n");
 
-        (void) bitmap2D;
+        for (int row = 0; row < Bit2_height(bitmap2D); row++) {
+                // printf("Just tried to get rows\n");
+                for (int col = 0; col < Bit2_width(bitmap2D); col++) {
+                        printf("%d ", Bit2_get(bitmap2D, col, row));
+                }
+                printf("\n");
+        }
+
+        Bit2_free(&bitmap2D);
         
         return 0;
 }
