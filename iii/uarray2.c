@@ -216,14 +216,10 @@ void UArray2_map_col_major(T uarray2,
         if(uarray2 == NULL || apply == NULL || cl == NULL) {
                 RAISE(Invalid_Argument);
         }
-
-        // (void) apply;
-        // (void) cl;
         
-        /* QUESTION: how do we configure function parameter? */
-        for (int row = 0; row < uarray2->height; row++) {
-                for (int col = 0; col < uarray2->width; col++) {
-                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), cl);
+        for (int col = 0; col < uarray2->width; col++) {
+                for (int row = 0; row < uarray2->height; row++) {
+                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), cl); /* TODO: 80 chars! */
                 }
         }
         
@@ -254,16 +250,19 @@ void UArray2_map_col_major(T uarray2,
  * Notes:
  * 
  ************************/
-void UArray2_map_row_major(T uarray2, void *function, void *cl)
+void UArray2_map_row_major(T uarray2, 
+        void apply(int col, int row, T a, void *p1, void *p2), void *cl)
 {
         /* Ensure all arguments are not NULL */
-        if(uarray2 == NULL || function == NULL || cl == NULL) {
+        if(uarray2 == NULL || apply == NULL || cl == NULL) {
                 RAISE(Invalid_Argument);
         }
-
-        (void) uarray2;
-        (void) function;
-        (void) cl;
+        
+        for (int row = 0; row < uarray2->height; row++) {
+                for (int col = 0; col < uarray2->width; col++) {
+                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), cl); /* TODO: 80 chars! */
+                }
+        }
         
 }
 
