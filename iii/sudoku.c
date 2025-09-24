@@ -29,17 +29,18 @@ void populate(int col, int row, UArray2_T uarray2, void *value_vp, void *rdr_vp)
 }
 
 /* TODO: check if an element is a part of valid sudoku */
-// void check_sudoku_elem(int col, int row, UArray2_T uarray2, void *value_vp, void *tracking_arr)
-// {
+void check_sudoku_elem(int col, int row, UArray2_T uarray2, void *value_vp, void *tracking_arr)
+{
 
-// }
+}
 
 int main(int argc, char *argv[])
 {
         assert(argc == 1 || argc == 2);
 
-        /* Try to open file (assuming that we have 1 argument) */
-        FILE *fp = fopen(argv[1], "rb");
+        /* Try to open file (TODO: assuming we have 1 argument) */
+        FILE *fp = fopen(argv[1], "rb"); /* TODO: question about comment */
+        assert(fp != NULL);
 
         /* Set up PNM reader content */
         Pnmrdr_T rdr = Pnmrdr_new(fp);
