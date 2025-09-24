@@ -25,10 +25,10 @@ typedef struct T *T;
  * Creates a new 2D bit array with specified dimensions
  *
  * Parameters:
- *      int width: number of columns (must be non-negative)
- *      int height: number of rows (must be non-negative)
+ *      int width:      number of columns
+ *      int height:     number of rows
  * Return: 
- *      Pointer to new Bit2_T instance (under the hood is Hanson bitmap)
+ *      Pointer to new Bit2_T instance
  * Expects:
  *      width and height are non-negative
  *      Throws CRE if invalid dimensions
@@ -47,7 +47,7 @@ T Bit2_new(int width, int height);
  *      Nothing
  * Expects:
  *      bitmap and *bitmap are not NULL
- *      Throws CRE if NULL pointer
+ *      Throws CRE if client passes NULL pointer
  ************************/
 void Bit2_free(T *bitmap);
 
@@ -107,7 +107,7 @@ int Bit2_get(T bitmap, int col, int row);
  *      int row: row index (0-based)
  *      int bit: value to set (0 or 1)
  * Return: 
- *      Previous value at that position
+ *      Previous bit value at that position
  * Expects:
  *      bitmap is not NULL
  *      col in range [0, width-1]
@@ -117,37 +117,43 @@ int Bit2_get(T bitmap, int col, int row);
  ************************/
 int Bit2_put(T bitmap, int col, int row, int bit);
 
-/******** Bit2_map_row_major ********
- *
- * Applies function to each bit in row-major order
- * (processes each row completely before moving to next row)
- *
- * Parameters:
- *      T bitmap: Bit2_T instance
- *      TODO: figure out other arguments
- * Return: 
- *      Nothing
- * Expects:
- *      bitmap is not NULL
- *      Throws CRE if NULL pointers
- ************************/
-void Bit2_map_row_major(T bitmap);
-
 /******** Bit2_map_col_major ********
  *
  * Applies function to each bit in column-major order
  * (processes each column completely before moving to next column)
  *
  * Parameters:
- *      T bitmap: Bit2_T instance
- *      TODO: figure out other arguments
+ *      T bitmap:       Bit2_T instance
+ *      void apply:     general function pointer which takes, column, row, 
+ *                      bitmap, bit, and closure as parameters
+ *      void *cl:       closure pointer for client's implementation.
  * Return: 
  *      Nothing
  * Expects:
- *      bitmap is not NULL
+ *      all arguments are not NULL
  *      Throws CRE if NULL pointers
  ************************/
-void Bit2_map_col_major(T bitmap);
+void Bit2_map_col_major(T bitmap, 
+        void apply(int col, int row, T bitmap, int bit, void *cl), void *cl);
+
+/******** Bit2_map_row_major ********
+ *
+ * Applies function to each bit in row-major order
+ * (processes each column completely before moving to next column)
+ *
+ * Parameters:
+ *      T bitmap:       Bit2_T instance
+ *      void apply:     general function pointer which takes, column, row, 
+ *                      bitmap, bit, and closure as parameters
+ *      void *cl:       closure pointer for client's implementation.
+ * Return: 
+ *      Nothing
+ * Expects:
+ *      all arguments are not NULL
+ *      Throws CRE if NULL pointers
+ ************************/
+void Bit2_map_row_major(T bitmap, 
+        void apply(int col, int row, T bitmap, int bit, void *cl), void *cl);
 
 #undef T
 #endif

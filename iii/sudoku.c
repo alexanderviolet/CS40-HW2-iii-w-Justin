@@ -12,21 +12,27 @@
 #include "assert.h"
 #include <pnmrdr.h>
 
+/* TODO: function contract */
 void populate(int col, int row, UArray2_T uarray2, void *value_vp, void *rdr_vp)
 {
-        printf("col %d ", col);
-        printf("row %d \n", row);
+        /* Eliminate warning for unused arguments */
+        (void) col;
+        (void) row;
         (void) uarray2;
-
+        
+        /* Convert void pointers to usable pointers */
         Pnmrdr_T rdr_copy = rdr_vp;
-
         int *value = value_vp;
 
-        // assert(UArray2_at(uarray2, col, row) == value);
-        printf("value %d\n", Pnmrdr_get(rdr_copy));
-
+        /* Set value within array to the next data element in pnmrdr */
         *value = Pnmrdr_get(rdr_copy);
 }
+
+/* TODO: check if an element is a part of valid sudoku */
+// void check_sudoku_elem(int col, int row, UArray2_T uarray2, void *value_vp, void *tracking_arr)
+// {
+
+// }
 
 int main(int argc, char *argv[])
 {
@@ -34,26 +40,26 @@ int main(int argc, char *argv[])
 
         /* Try to open file (assuming that we have 1 argument) */
         FILE *fp = fopen(argv[1], "rb");
-        Pnmrdr_T rdr;
 
-        /* Test */
-        rdr = Pnmrdr_new(fp);
-
+        /* Set up PNM reader content */
+        Pnmrdr_T rdr = Pnmrdr_new(fp);
         Pnmrdr_mapdata data = Pnmrdr_data(rdr);
 
-        /* Access inital pgm info: */
-        printf("trying to access data:\n");
-        printf("width of pgm: %u\n", data.width);
-        printf("height of pgm: %u\n", data.height);
-
+        /* Declare blank 2D array of PGM's dimensions */
         UArray2_T arr = UArray2_new(data.width, data.height, sizeof(int));
-        printf("height %d ", UArray2_height(arr));
+        
+        /* Populate the array with pnmrdr content */
         UArray2_map_row_major(arr, populate, rdr);
-        // for (int row = 0; row < data.height; row++) {
-        //         for (int col = 0; col < data.width; col++) {
-        //                 int *value = UArray2_at(ar);
-        //         }
-        // }
+        
+        /* For testing: Print Array */
+        for (int row = 0; row < UArray2_height(arr); row++) {
+                for (int col = 0; col < UArray2_width(arr); col++) {
+                        int *value = UArray2_at(arr, col, row);
+                        printf("%d ", *value);
+                }
+                printf("\n");
+        }
+
 
         Pnmrdr_free(&rdr);
         UArray2_free(&arr);

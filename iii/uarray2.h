@@ -5,9 +5,7 @@
  *      iii
  * 
  *      Header file with function prototypes and function contracts for the 
- *      UArray2 Implementation. This is also part of our design submission, so
- *      future us don't get confused when you see function contracts here rather
- *      than the .c file. 
+ *      UArray2 Implementation.
  */
  
 #include <stdio.h>
@@ -38,7 +36,7 @@ typedef struct T *T;
  *      size is positive
  *      throws a CRE if an invalid input is given
  * Notes:
- *      None
+ *      throws a CRE if malloc fails
  ************************/
 T UArray2_new(int width, int height, int size);
 
@@ -54,7 +52,7 @@ T UArray2_new(int width, int height, int size);
  * Expects:
  *      CRE if uarray2 or *uarray2 are NULL (plan to check if thrown by Hanson)
  * Notes:
- *      In reality, *uarray2 points to a struct pointer to a UArray
+ *      None
  ************************/
 void UArray2_free(T *uarray2);
 
@@ -67,7 +65,7 @@ void UArray2_free(T *uarray2);
  * Return: 
  *      int representing the number of columns of a UArray2
  * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      uarray2 is not NULL
  * Notes:
  *      none
  ************************/
@@ -82,7 +80,8 @@ int UArray2_width(T uarray2);
  * Return: 
  *      int representing the number of rows of a UArray2
  * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      uarray2 is not NULL
+ *      CRE if uarray2 is NULL
  * Notes:
  *      none
  ************************/
@@ -97,7 +96,8 @@ int UArray2_height(T uarray2);
  * Return: 
  *      Return the number of bytes per unboxed slot
  * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      uarray2 is not NULL
+ *      CRE if uarray2 is NULL
  * Notes:
  *      none
  ************************/
@@ -105,8 +105,8 @@ int UArray2_size(T uarray2);
 
 /******** UArray2_at ********
  *
- * Client requests UArray2_at(col, row). Returns void pointer to memory located 
- * at arr[col][row].
+ * Client requests UArray2_at(col, row). Under the hood, we are actually going
+ * for 1D Uarray which can be accessed at UArray_at(row * width + col).
  *
  * Parameters:
  *      uarray2: address value of uarray object
@@ -137,9 +137,9 @@ int UArray2_size(T uarray2);
  *      the map function to apply to each element
  *              For example: in useuarray2.c they passed check and print to
  *              each element.
- *      void *cl: void pointer to some dependent element within mapping. To be 
- *                modular, the parameter is a void pointer so the client can 
- *                give us whatever they want.
+ *      void *cl: closure void pointer to some dependent element within mapping.
+ *                To be modular, the parameter is a void pointer so the client 
+ *                can give us whatever they want.
  * Return: 
  *      nothing
  * Expects:
@@ -147,10 +147,8 @@ int UArray2_size(T uarray2);
  *      CRE if passed NULL function pointer
  *      CRE if void pointer supplied is NULL
  * Notes:
- *      Boolean is a tracker pointer, which may be altered for error checking
- *      and assertions elsewhere
+ * 
  ************************/
-//  void UArray2_map_col_major(T uarray2, void *function, void *cl);
 void UArray2_map_col_major(T uarray2, 
         void apply(int col, int row, T a, void *p1, void *p2), void *cl);
 
@@ -167,9 +165,9 @@ void UArray2_map_col_major(T uarray2,
  *      the map function to apply to each element
  *              For example: in useuarray2.c they passed check and print to
  *              each element.
- *      void *cl: void pointer to some dependent element within mapping. To be 
- *                modular, the parameter is a void pointer so the client can 
- *                give us whatever they want.
+ *      void *cl: closure void pointer to some dependent element within mapping.
+ *                To be modular, the parameter is a void pointer so the client 
+ *                can give us whatever they want.
  * Return:
  *      nothing
  * Expects:
@@ -177,8 +175,7 @@ void UArray2_map_col_major(T uarray2,
  *      CRE if passed NULL function pointer
  *      CRE if void pointer supplied is NULL
  * Notes:
- *      Boolean is a tracker pointer, which may be altered for error checking
- *      and assertions elsewhere
+ * 
  ************************/
 void UArray2_map_row_major(T uarray2, 
         void apply(int col, int row, T a, void *p1, void *p2), void *cl);

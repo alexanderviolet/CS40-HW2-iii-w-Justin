@@ -4,19 +4,12 @@
  *      September 25, 2025
  *      iii
  * 
- *      Interface for two-dimensional bit arrays
+ *      Implementation for two-dimensional bit arrays
  */
  
 #include "bit2.h"
 
 #define T Bit2_T
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-/*                      EXCEPTION(S)                     */
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-Except_T Invalid_Argument;
-Except_T Malloc_Error;
 
 struct T
 {
@@ -30,10 +23,10 @@ struct T
  * Creates a new 2D bit array with specified dimensions
  *
  * Parameters:
- *      int width: number of columns (must be non-negative)
- *      int height: number of rows (must be non-negative)
+ *      int width:      number of columns
+ *      int height:     number of rows
  * Return: 
- *      Pointer to new Bit2_T instance (under the hood is Hanson bitmap)
+ *      Pointer to new Bit2_T instance
  * Expects:
  *      width and height are non-negative
  *      Throws CRE if invalid dimensions
@@ -43,20 +36,15 @@ struct T
 T Bit2_new(int width, int height)
 {
         /* Ensure dimensions are valid */
-        if (width < 0 || height < 0) {
-                RAISE(Invalid_Argument);
-        }
+        assert(width >= 0 && height >= 0);
 
         /* Make a UArray object */
         T bit2d = malloc(sizeof(*bit2d));
-        if(bit2d == NULL) {
-                RAISE(Malloc_Error);
-        }
+        assert(bit2d != NULL);
 
+        /* populate struct */
         bit2d->width = width;
-        // printf("WIDTH: %d <-- this corresponds to number of columns\n", bit2d->width);
         bit2d->height = height;
-        // printf("HEIGHT: %d <-- this corresponds to number of columns\n", bit2d->height);
         bit2d->array = Bit_new(width * height);
 
         return bit2d;
@@ -72,10 +60,13 @@ T Bit2_new(int width, int height)
  *      Nothing
  * Expects:
  *      bitmap and *bitmap are not NULL
- *      Throws CRE if NULL pointer
+ *      Throws CRE if client passes NULL pointer
  ************************/
 void Bit2_free(T *bitmap)
 {
+        /* Ensure no pointers are NULL */
+        assert(bitmap != NULL && *bitmap != NULL);
+        
         /* Free 1D bidmap */
         Bit_free(&(*bitmap)->array);
 
@@ -97,9 +88,7 @@ void Bit2_free(T *bitmap)
  ************************/
 int Bit2_width(T bitmap)
 {
-        if (bitmap == NULL) {
-                RAISE(Invalid_Argument);
-        }
+        assert(bitmap != NULL);
 
         return bitmap->width;
 }
@@ -118,9 +107,7 @@ int Bit2_width(T bitmap)
  ************************/
 int Bit2_height(T bitmap)
 {
-        if (bitmap == NULL) {
-                RAISE(Invalid_Argument);
-        }
+        assert(bitmap != NULL);
 
         return bitmap->height;
 }
@@ -143,13 +130,8 @@ int Bit2_height(T bitmap)
  ************************/
 int Bit2_get(T bitmap, int col, int row)
 {
-        if (bitmap == NULL) {
-                RAISE(Invalid_Argument);
-        } else if (col < 0 || bitmap->width - 1 < col) {
-                RAISE(Invalid_Argument);
-        } else if (row < 0 || bitmap->height - 1 < row) {
-                RAISE(Invalid_Argument);
-        }
+        assert(bitmap != NULL && 0 <= col && col < bitmap->width && 0 <= row &&
+                row < bitmap->height);
 
         return Bit_get(bitmap->array, row * bitmap->width + col);
 }
@@ -174,37 +156,12 @@ int Bit2_get(T bitmap, int col, int row)
  ************************/
 int Bit2_put(T bitmap, int col, int row, int bit)
 {
-        if (bitmap == NULL) {
-                RAISE(Invalid_Argument);
-        } else if (col < 0 || bitmap->height - 1 < col) {
-                RAISE(Invalid_Argument);
-        } else if (row < 0 || bitmap->width - 1 < row) {
-                RAISE(Invalid_Argument);
-        } else if (bit < 0 || 1 < bit) {
-                RAISE(Invalid_Argument);
-        }
+        assert(bitmap != NULL && 0 <= col && col < bitmap->width && 0 <= row &&
+                row < bitmap->height && 0 <= bit && bit <= 1);
 
         return Bit_put(bitmap->array, row * bitmap->width + col, bit);
 }
 
-/******** Bit2_map_row_major ********
- *
- * Applies function to each bit in row-major order
- * (processes each row completely before moving to next row)
- *
- * Parameters:
- *      T bitmap: Bit2_T instance
- *      TODO: figure out other arguments
- * Return: 
- *      Nothing
- * Expects:
- *      bitmap is not NULL
- *      Throws CRE if NULL pointers
- ************************/
-void Bit2_map_row_major(T bitmap)
-{
-        (void) bitmap;
-}
 
 /******** Bit2_map_col_major ********
  *
@@ -212,17 +169,54 @@ void Bit2_map_row_major(T bitmap)
  * (processes each column completely before moving to next column)
  *
  * Parameters:
- *      T bitmap: Bit2_T instance
- *      TODO: figure out other arguments
+ *      T bitmap:       Bit2_T instance
+ *      void apply:     general function pointer which takes, column, row, 
+ *                      bitmap, bit, and closure as parameters
+ *      void *cl:       closure pointer for client's implementation.
  * Return: 
  *      Nothing
  * Expects:
- *      bitmap is not NULL
+ *      all arguments are not NULL
  *      Throws CRE if NULL pointers
  ************************/
-void Bit2_map_col_major(T bitmap)
+void Bit2_map_col_major(T bitmap, 
+        void apply(int col, int row, T bitmap, int bit, void *cl), void *cl)
 {
-        (void) bitmap;
+        assert(bitmap != NULL && apply != NULL && cl != NULL);
+
+        for (int col = 0; col < bitmap->width; col++) {
+                for (int row = 0; row < bitmap->height; row++) {
+                        apply(col, row, bitmap, Bit2_get(bitmap, col, row), cl);
+                }
+        }
+}
+
+/******** Bit2_map_row_major ********
+ *
+ * Applies function to each bit in row-major order
+ * (processes each column completely before moving to next column)
+ *
+ * Parameters:
+ *      T bitmap:       Bit2_T instance
+ *      void apply:     general function pointer which takes, column, row, 
+ *                      bitmap, bit, and closure as parameters
+ *      void *cl:       closure pointer for client's implementation.
+ * Return: 
+ *      Nothing
+ * Expects:
+ *      all arguments are not NULL
+ *      Throws CRE if NULL pointers
+ ************************/
+void Bit2_map_row_major(T bitmap, 
+        void apply(int col, int row, T bitmap, int bit, void *cl), void *cl)
+{
+        assert(bitmap != NULL && apply != NULL && cl != NULL);
+
+        for (int row = 0; row < bitmap->height; row++) {
+                for (int col = 0; col < bitmap->width; col++) {
+                        apply(col, row, bitmap, Bit2_get(bitmap, col, row), cl);
+                }
+        }
 }
 
 #undef T

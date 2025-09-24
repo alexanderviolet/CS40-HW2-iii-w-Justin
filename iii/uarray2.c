@@ -12,13 +12,6 @@
 
 #define T UArray2_T
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-/*                      EXCEPTION(S)                     */
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-Except_T Invalid_Argument;
-Except_T Malloc_Error;
-
 struct T
 {
         int width;
@@ -47,16 +40,13 @@ struct T
  ************************/
 T UArray2_new(int width, int height, int size)
 {       
-        if (width < 0 || height < 0 || size <= 0) {
-                RAISE(Invalid_Argument);
-        }
+        assert(0 <= width && 0 <= height && 0 < size);
 
         /* Make a UArray object */
         T arr2d = malloc(sizeof(*arr2d));
-        if(arr2d == NULL) {
-                RAISE(Malloc_Error);
-        }
+        assert(arr2d != NULL);
 
+        /* populate struct */
         arr2d->width = width;
         arr2d->height = height;
         arr2d->size = size;
@@ -77,10 +67,12 @@ T UArray2_new(int width, int height, int size)
  * Expects:
  *      CRE if uarray2 or *uarray2 are NULL (plan to check if thrown by Hanson)
  * Notes:
- *      In reality, *uarray2 points to a struct pointer to a UArray
+ *      None
  ************************/
 void UArray2_free(T *uarray2)
 {
+        assert(uarray2 != NULL && *uarray2 != NULL);
+
         /* Free 1D array */
         UArray_free(&(*uarray2)->array);
 
@@ -97,15 +89,13 @@ void UArray2_free(T *uarray2)
  * Return: 
  *      int representing the number of columns of a UArray2
  * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      uarray2 is not NULL
  * Notes:
  *      none
  ************************/
 int UArray2_width(T uarray2)
 {
-        if (uarray2 == NULL) {
-                RAISE(Invalid_Argument);
-        }
+        assert(uarray2 != NULL);
 
         return uarray2->width;
 }
@@ -119,15 +109,15 @@ int UArray2_width(T uarray2)
  * Return: 
  *      int representing the number of rows of a UArray2
  * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      uarray2 is not NULL
+ *      CRE if uarray2 is NULL
  * Notes:
  *      none
  ************************/
 int UArray2_height(T uarray2)
 {
-        if (uarray2 == NULL) {
-                RAISE(Invalid_Argument);
-        }
+        assert(uarray2 != NULL);
+
         return uarray2->height;
 }
 
@@ -140,15 +130,15 @@ int UArray2_height(T uarray2)
  * Return: 
  *      Return the number of bytes per unboxed slot
  * Expects:
- *      CRE if uarray2 is NULL (thrown by Hanson)
+ *      uarray2 is not NULL
+ *      CRE if uarray2 is NULL
  * Notes:
  *      none
  ************************/
 int UArray2_size(T uarray2)
 {
-        if (uarray2 == NULL) {
-                RAISE(Invalid_Argument);
-        }
+        assert(uarray2 != NULL);
+
         return uarray2->size;
 }
 
@@ -171,13 +161,8 @@ int UArray2_size(T uarray2)
  ************************/
 void *UArray2_at(T uarray2, int col, int row)
 {
-        if (uarray2 == NULL) {
-                RAISE(Invalid_Argument);
-        } else if (col < 0 || uarray2->width - 1 < col) {
-                RAISE(Invalid_Argument);
-        } else if (row < 0 || uarray2->height - 1 < row) {
-                RAISE(Invalid_Argument);
-        }
+        assert(uarray2 != NULL && 0 <= col && col < uarray2->width && 0 <= row
+                && row < uarray2->height);
 
         return UArray_at(uarray2->array, row * uarray2->width + col);
 }
@@ -213,9 +198,7 @@ void UArray2_map_col_major(T uarray2,
         void apply(int col, int row, T a, void *p1, void *p2), void *cl)
 {
         /* Ensure all arguments are not NULL */
-        if(uarray2 == NULL || apply == NULL || cl == NULL) {
-                RAISE(Invalid_Argument);
-        }
+        assert(uarray2 != NULL && apply != NULL && cl != NULL);
         
         for (int col = 0; col < uarray2->width; col++) {
                 for (int row = 0; row < uarray2->height; row++) {
@@ -254,16 +237,13 @@ void UArray2_map_row_major(T uarray2,
         void apply(int col, int row, T a, void *p1, void *p2), void *cl)
 {
         /* Ensure all arguments are not NULL */
-        if(uarray2 == NULL || apply == NULL || cl == NULL) {
-                RAISE(Invalid_Argument);
-        }
+        assert(uarray2 != NULL && apply != NULL && cl != NULL);
         
         for (int row = 0; row < uarray2->height; row++) {
                 for (int col = 0; col < uarray2->width; col++) {
                         apply(col, row, uarray2, UArray2_at(uarray2, col, row), cl); /* TODO: 80 chars! */
                 }
         }
-        
 }
 
 #undef T
