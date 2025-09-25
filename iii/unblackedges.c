@@ -71,7 +71,7 @@ int main (int argc, char *argv[])
         for (int row = 0; row < Bit2_height(bit2); row++) {
                 for (int col = 0; col < Bit2_width(bit2); col++) {
                         int value = Bit2_get(bit2, col, row);
-                        printf("%d ", (value + 1) % 2);
+                        printf("%d ", value);
                 }
                 printf("\n");
         }
@@ -110,7 +110,7 @@ Bit2_T initializeBitMap(int argc, char *argv[])
         Bit2_map_row_major(bit2, populate, rdr);
 
         /* Output Header to standard output */
-        printf("P2\n%d %d\n1\n", data.width, data.height);
+        printf("P1\n%d %d\n", data.width, data.height);
 
         fclose(fp);
         Pnmrdr_free(&rdr);
