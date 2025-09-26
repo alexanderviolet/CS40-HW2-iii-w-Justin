@@ -1,10 +1,10 @@
 /*
- *      sudoku.c
+ *      unblackedges.c
  *      Justin Paik (jpaik03), Alex Violet (aviole01)
  *      September 25, 2025
  *      iii
  * 
- *      Implementation to determine if a PGM is a valid sudoku or not using 
+ *      TODO: Implementation to determine if a PGM is a valid sudoku or not using 
  *      our Bit2 interface and PNM reader (pnmrdr)
  */
 
@@ -24,10 +24,12 @@ struct element {
 Bit2_T initializeBitMap(int argc, char *argv[]);
 FILE *openFile(int argc, char *argv[]);
 void populate(int col, int row, Bit2_T bit2, int value, void *rdr_vp);
+void find_edge_source(Bit2_T);
 void check_edges(int col, int row, Stack_T stack, Bit2_T bit2);
 void process_stack(Stack_T stack, Bit2_T bit2);
 void process_element(Stack_T stack, Bit2_T bit2);
 void push_to_stack(int col, int row, Stack_T stack, Bit2_T);
+void print_no_black_edges(Bit2_T bit2);
 
 /******** main ********
  *
@@ -49,32 +51,9 @@ int main (int argc, char *argv[])
         Bit2_T bit2 = initializeBitMap(argc, argv);
         Stack_T stack = Stack_new();
 
-        /* Hardcoding for 1st column (left side) */
-        for (int row = 0; row < Bit2_height(bit2); row++) {
-                check_edges(0, row, stack, bit2);
-        }
+        find_edge_source(bit2);
 
-        /* Hardcoding for last row (bottom side) */
-        for (int col = 0; col < Bit2_width(bit2); col++) {
-                check_edges(col, Bit2_height(bit2) - 1, stack, bit2);
-        }
-        /* Hardcoding for last column (right side) */
-        for (int row = 0; row < Bit2_height(bit2); row++) {
-                check_edges(Bit2_width(bit2) - 1, row, stack, bit2);
-        }
-        /* Hardcoding for 1st row (top side) */
-        for (int col = 0; col < Bit2_width(bit2); col++) {
-                check_edges(col, 0, stack, bit2);
-        }
-
-        /* Print remaining content */
-        for (int row = 0; row < Bit2_height(bit2); row++) {
-                for (int col = 0; col < Bit2_width(bit2); col++) {
-                        int value = Bit2_get(bit2, col, row);
-                        printf("%d ", value);
-                }
-                printf("\n");
-        }
+        print_no_black_edges(bit2);
 
         Stack_free(&stack);
         Bit2_free(&bit2);
@@ -176,6 +155,7 @@ void populate(int col, int row, Bit2_T bit2, int value, void *rdr_vp)
 {       
         assert(bit2 != NULL && rdr_vp != NULL);
         
+        /* Eliminate warning for unused argument */
         (void) value;
 
         /* Convert void pointers to usable pointers */
@@ -183,6 +163,30 @@ void populate(int col, int row, Bit2_T bit2, int value, void *rdr_vp)
 
         /* Set value within array to the next data element in pnmrdr */
         Bit2_put(bit2, col, row, Pnmrdr_get(rdr_copy));
+}
+
+/* TODO: function contract */
+void find_edge_source(Bit2_T)
+{
+        /* 1st column (left side) */
+        for (int row = 0; row < Bit2_height(bit2); row++) {
+                check_edges(0, row, stack, bit2);
+        }
+
+        /* Last row (bottom side) */
+        for (int col = 0; col < Bit2_width(bit2); col++) {
+                check_edges(col, Bit2_height(bit2) - 1, stack, bit2);
+        }
+        
+        /* Last column (right side) */
+        for (int row = 0; row < Bit2_height(bit2); row++) {
+                check_edges(Bit2_width(bit2) - 1, row, stack, bit2);
+        }
+
+        /* 1st row (top side) */
+        for (int col = 0; col < Bit2_width(bit2); col++) {
+                check_edges(col, 0, stack, bit2);
+        }
 }
 
 /* TODO: function contract */
@@ -305,4 +309,16 @@ void push_to_stack(int col, int row, Stack_T stack, Bit2_T bit2)
         elem->row = row;
 
         Stack_push(stack, elem);
+}
+
+/* TODO: function contract */
+void print_no_black_edges(Bit2_T bit2)
+{
+        for (int row = 0; row < Bit2_height(bit2); row++) {
+                for (int col = 0; col < Bit2_width(bit2); col++) {
+                        int value = Bit2_get(bit2, col, row);
+                        printf("%d ", value);
+                }
+                printf("\n");
+        }
 }
