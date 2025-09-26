@@ -4,8 +4,7 @@
  *      September 25, 2025
  *      iii
  * 
- *      TODO: Implementation to determine if a PGM is a valid sudoku or not using 
- *      our Bit2 interface and PNM reader (pnmrdr)
+ *      Implementation of removing black edges from a PBM
  */
 
 #include "bit2.h"
@@ -24,20 +23,20 @@ struct element {
 Bit2_T initializeBitMap(int argc, char *argv[]);
 FILE *openFile(int argc, char *argv[]);
 void populate(int col, int row, Bit2_T bit2, int value, void *rdr_vp);
-void find_edge_source(Bit2_T);
-void check_edges(int col, int row, Stack_T stack, Bit2_T bit2);
+void find_black_edges(int col, int row, Bit2_T bit2, int b, void *stack);
+void check_neighbors(int col, int row, Stack_T stack, Bit2_T bit2);
 void process_stack(Stack_T stack, Bit2_T bit2);
 void process_element(Stack_T stack, Bit2_T bit2);
 void push_to_stack(int col, int row, Stack_T stack, Bit2_T);
-void print_no_black_edges(Bit2_T bit2);
+void print_solution(int col, int row, Bit2_T bit2, int b, void *cl);
 
 /******** main ********
  *
  * Driver function for unblackedges program
  *
  * Parameters:
- *      int argc:       argument count integer
- *      char *argv[]:   argument character arrays
+ *      int argc:       argument count
+ *      char *argv[]:   argument character array
  * Return: 
  *      0 if successful program run
  * Expects:
@@ -51,9 +50,9 @@ int main (int argc, char *argv[])
         Bit2_T bit2 = initializeBitMap(argc, argv);
         Stack_T stack = Stack_new();
 
-        find_edge_source(bit2);
-
-        print_no_black_edges(bit2);
+        Bit2_map_row_major(bit2, find_black_edges, stack);
+        
+        Bit2_map_row_major(bit2, print_solution, stack);
 
         Stack_free(&stack);
         Bit2_free(&bit2);
@@ -67,13 +66,13 @@ int main (int argc, char *argv[])
  *
  * Parameters:
  *      int argc:       argument count
- *      char *argv[]:   argument character arrays
+ *      char *argv[]:   argument character array
  * Return: 
  *      address of bit2 object
  * Expects:
  *      None
  * Notes: 
- *      None
+ *      Prints header of PBM to standard output here
  ************************/
 Bit2_T initializeBitMap(int argc, char *argv[])
 {
@@ -81,6 +80,9 @@ Bit2_T initializeBitMap(int argc, char *argv[])
         FILE *fp = openFile(argc, argv);
         Pnmrdr_T rdr = Pnmrdr_new(fp);
         Pnmrdr_mapdata data = Pnmrdr_data(rdr);
+
+        /* Ensure image is PBM format */
+        assert(data.type == 1);
 
         /* Declare blank 2D array of PBM's dimensions */
         Bit2_T bit2 = Bit2_new(data.width, data.height);
@@ -109,7 +111,7 @@ Bit2_T initializeBitMap(int argc, char *argv[])
  * Return: 
  *      FILE pointer to file (given file opens successfully)
  * Expects:
- *      argc and argv to be properly defined, other error checking occurs here
+ *      argc is 1 or 2
  * Notes: 
  *      Terminates with a CRE if the argument count is invalid or if the file
  *      does not open successfully.
@@ -141,7 +143,7 @@ FILE *openFile(int argc, char *argv[])
  * Parameters:
  *      int col:        col integer of element
  *      int row:        row integer of element
- *      Bit2_T bit2:    bit2 object 
+ *      Bit2_T bit2:    bit2 object
  *      int value:      bit element at (col, row)
  *      void *rdr_vp:   void pointer to reader 
  * Return: 
@@ -165,32 +167,53 @@ void populate(int col, int row, Bit2_T bit2, int value, void *rdr_vp)
         Bit2_put(bit2, col, row, Pnmrdr_get(rdr_copy));
 }
 
-/* TODO: function contract */
-void find_edge_source(Bit2_T)
+/******** find_black_edges ********
+ *
+ * Search for patient 0
+ *
+ * Parameters:
+ *      int col:        col integer of element
+ *      int row:        row integer of element
+ *      Bit2_T bit2:    bit2 map of image data
+ *      int value:      bit element at (col, row)
+ *      void *stack:    void pointer to stack
+ * Return: 
+ *      none
+ * Expects:
+ *      bit2 and stack are not NULL. Throws CRE otherwise.
+ * Notes: 
+ *      This function is called by bit mapping functions. 
+ ************************/
+void find_black_edges(int col, int row, Bit2_T bit2, int b, void *stack) 
 {
-        /* 1st column (left side) */
-        for (int row = 0; row < Bit2_height(bit2); row++) {
-                check_edges(0, row, stack, bit2);
-        }
-
-        /* Last row (bottom side) */
-        for (int col = 0; col < Bit2_width(bit2); col++) {
-                check_edges(col, Bit2_height(bit2) - 1, stack, bit2);
-        }
+        assert(bit2 != NULL && stack != NULL);
         
-        /* Last column (right side) */
-        for (int row = 0; row < Bit2_height(bit2); row++) {
-                check_edges(Bit2_width(bit2) - 1, row, stack, bit2);
-        }
-
-        /* 1st row (top side) */
-        for (int col = 0; col < Bit2_width(bit2); col++) {
-                check_edges(col, 0, stack, bit2);
+        (void) b;
+        
+        if (col == 0 || row == 0 || col == Bit2_width(bit2) - 1 ||
+                row == Bit2_height(bit2) - 1) {
+                check_neighbors(col, row, stack, bit2);
         }
 }
 
-/* TODO: function contract */
-void check_edges(int col, int row, Stack_T stack, Bit2_T bit2)
+/******** check_neighbors ********
+ *
+ * traverse bitmap for connected black edges. Search all possible neighbors
+ * and process stack accordingly.
+ *
+ * Parameters:
+ *      int col:        col integer of element
+ *      int row:        row integer of element
+ *      Stack_T stack:  stack object
+ *      Bit2_T bit2:    bit2 map of image data
+ * Return: 
+ *      0 if successful program run
+ * Expects:
+ *      None
+ * Notes: 
+ *      None
+ ************************/
+void check_neighbors(int col, int row, Stack_T stack, Bit2_T bit2)
 {
         /* ALWAYS check at before every iteration if stack is populated */
         if (Stack_empty(stack) == false) {
@@ -216,7 +239,7 @@ void check_edges(int col, int row, Stack_T stack, Bit2_T bit2)
  * Expects:
  *      stack and bit2 are not NULL. Throws CRE otherwise. 
  * Notes: 
- *      drives loop to iterate through stack. Pushing / popping is elsewhere. 
+ *      drives loop to iterate through stack. Pushing / popping is elsewhere.
  ************************/
 void process_stack(Stack_T stack, Bit2_T bit2)
 {
@@ -233,7 +256,7 @@ void process_stack(Stack_T stack, Bit2_T bit2)
  * future checking. 
  *
  * Parameters:
- *      Stack_T stack:  stack of coordiates that may or may not need to be 
+ *      Stack_T stack:  stack of coordinates that may or may not need to be 
  *                      whitened
  *      Bit2_T bit2:    bit2 map of image data
  * Return: 
@@ -241,7 +264,9 @@ void process_stack(Stack_T stack, Bit2_T bit2)
  * Expects:
  *      stack and bit2 are not NULL. Throws CRE otherwise. 
  * Notes: 
- *      Here is where pushing / popping logic occurs.  
+ *      Here is where pushing / popping logic occurs.
+ *      element is malloc'd in push_to_stack(), here is where we pop and thus 
+ *      free
  ************************/
 void process_element(Stack_T stack, Bit2_T bit2)
 {
@@ -311,14 +336,34 @@ void push_to_stack(int col, int row, Stack_T stack, Bit2_T bit2)
         Stack_push(stack, elem);
 }
 
-/* TODO: function contract */
-void print_no_black_edges(Bit2_T bit2)
+/******** print_solution ********
+ *
+ * print every bit to standard output
+ *
+ * Parameters:
+ *      int col:        col integer of element
+ *      int row:        row integer of element
+ *      Bit2_T bit2:    bit2 map of image data
+ *      int b:          bit element at (col, row)
+ *      void *cl:       unused closure pointer
+ * Return: 
+ *      none
+ * Expects:
+ *      bit2 is not NULL. Throws CRE otherwise.
+ * Notes: 
+ *      Depending on what col and row index are, either print new line or space
+ ************************/
+void print_solution(int col, int row, Bit2_T bit2, int b, void *cl) 
 {
-        for (int row = 0; row < Bit2_height(bit2); row++) {
-                for (int col = 0; col < Bit2_width(bit2); col++) {
-                        int value = Bit2_get(bit2, col, row);
-                        printf("%d ", value);
-                }
+        assert(bit2 != NULL);
+        (void) cl;
+
+        printf("%d", b);
+
+        if (col != Bit2_width(bit2) - 1) {
+                printf(" ");
+        } else if (col == Bit2_width(bit2) - 1 && 
+                row != Bit2_height(bit2) - 1) {
                 printf("\n");
         }
 }

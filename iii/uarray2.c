@@ -202,7 +202,8 @@ void UArray2_map_col_major(T uarray2,
         
         for (int col = 0; col < uarray2->width; col++) {
                 for (int row = 0; row < uarray2->height; row++) {
-                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), cl); /* TODO: 80 chars! */
+                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), 
+                                cl);
                 }
         }
         
@@ -241,7 +242,8 @@ void UArray2_map_row_major(T uarray2,
         
         for (int row = 0; row < uarray2->height; row++) {
                 for (int col = 0; col < uarray2->width; col++) {
-                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), cl); /* TODO: 80 chars! */
+                        apply(col, row, uarray2, UArray2_at(uarray2, col, row), 
+                                cl);
                 }
         }
 }
